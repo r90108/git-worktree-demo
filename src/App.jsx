@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import SocialProof from './components/SocialProof';
@@ -7,11 +8,27 @@ import Pricing from './components/Pricing';
 import FAQ from './components/FAQ';
 import CallToAction from './components/CallToAction';
 import Footer from './components/Footer';
+import CookieConsent from './components/CookieConsent';
 
 function App() {
+    const [theme, setTheme] = useState(() => {
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    };
+
     return (
         <div className="app">
-            <Navbar />
+            <Navbar theme={theme} toggleTheme={toggleTheme} />
             <main>
                 <Hero />
                 <SocialProof />
@@ -22,6 +39,7 @@ function App() {
                 <CallToAction />
             </main>
             <Footer />
+            <CookieConsent />
         </div>
     );
 }
